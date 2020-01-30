@@ -3,6 +3,7 @@ import express from 'express';
 
 // Importações de arquivos
 import routes from './routes';
+import './database';
 
 // Criação da classe App
 class App {
