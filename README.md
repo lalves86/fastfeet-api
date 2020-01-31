@@ -2,6 +2,8 @@
 
 # Desafio 02 - Início
 
+Este projeto é parte do processo de avaliação para o Bootcamp Gostack da Rocketseat.
+
 API para uma transportadora fictícia, estabelecendo a estrutura de conexão com banco de dados relacional, usando o ORM sequelize, e node.js.
 
 ## Rotas
