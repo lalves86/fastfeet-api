@@ -1,5 +1,6 @@
 // Importações de pacotes
 import express from 'express';
+import path from 'path';
 
 // Importações de arquivos
 import routes from './routes';
@@ -19,6 +20,10 @@ class App {
   // definição dos middlewares
   middlewares() {
     this.server.use(express.json());
+    this.server.use(
+      '/files',
+      express.static(path.resolve(__dirname, '..', 'tmp', 'uploads'))
+    );
   }
 
   // definição das rotas

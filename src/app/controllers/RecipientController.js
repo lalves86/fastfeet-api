@@ -39,9 +39,17 @@ class RecipientController {
       return res.status(404).json({ error: 'Recipient not found' });
     }
 
+    const { name, street, number, complement, state, city, zip } = recipient;
+
     return res.json({
       id,
-      recipient,
+      name,
+      street,
+      number,
+      complement,
+      state,
+      city,
+      zip,
     });
   }
 
@@ -61,7 +69,7 @@ class RecipientController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).josn({ error: 'Validation fails' });
+      return res.status(400).json({ error: 'Validation fails' });
     }
 
     const userExists = await Recipient.findOne({
