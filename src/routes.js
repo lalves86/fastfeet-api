@@ -11,12 +11,14 @@ import FileController from './app/controllers/FileController';
 import ScheduleController from './app/controllers/ScheduleController';
 import NotificationController from './app/controllers/NotificationController';
 import DeliveryController from './app/controllers/DeliveryController';
+import ProblemController from './app/controllers/ProblemController';
 
 import authMiddleware from './app/middlewares/auth';
 
 const routes = new Router();
 const upload = multer(multerConfig);
 
+// Rotas públicas
 routes.post('/sessions', SessionController.store);
 
 routes.get('/schedule/:id', ScheduleController.index);
@@ -32,10 +34,14 @@ routes.get('/deliveries/:delivererId', DeliveryController.index);
 
 routes.put('/deliveries/:delivererId/:orderId', DeliveryController.update);
 
-routes.use(authMiddleware);
-
 routes.post('/files', upload.single('file'), FileController.store);
 
+routes.post('/orders/:orderId/problems', ProblemController.store);
+
+// Middleware de autenticação
+routes.use(authMiddleware);
+
+// Rotas com autenticação
 routes.get('/users', UserController.index);
 
 routes.get('/users/:id', UserController.show);
@@ -75,5 +81,11 @@ routes.post('/orders', OrderController.store);
 routes.put('/orders/:id', OrderController.update);
 
 routes.delete('/orders/:id', OrderController.delete);
+
+routes.get('/problems', ProblemController.index);
+
+routes.get('/problems/:orderId', ProblemController.show);
+
+routes.delete('/problems/:orderId', ProblemController.delete);
 
 export default routes;

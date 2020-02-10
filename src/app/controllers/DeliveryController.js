@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { getHours, parseISO, getDate } from 'date-fns';
 
 import Order from '../models/Order';
 import File from '../models/File';
@@ -49,6 +50,9 @@ class DeliveryController {
 
     if (!delivery) return res.status(400).json({ error: 'Order id not found' });
 
+    if (delivery.canceled_at !== null)
+      return res.status(401).json({ error: 'This delivery is canceled' });
+
     if (parseInt(delivererId, 10) !== delivery.deliverer_id)
       return res.status(401).json({
         error: 'You can only change the status of your own deliveries',
@@ -59,13 +63,33 @@ class DeliveryController {
         .status(403)
         .json({ error: 'Cannot end a task before starting' });
 
-    const signatureExists = await File.findByPk(signature_id);
+    if (signature_id) {
+      const signatureExists = await File.findByPk(signature_id);
 
-    if (!signatureExists)
-      return res.status(400).json({ error: 'Signature id not found' });
+      if (!signatureExists)
+        return res.status(400).json({ error: 'Signature id not found' });
+    }
 
     if (start) {
       const start_date = new Date();
+      // const start_date = parseISO('2020-02-10T18:00:00-03:00');
+      if (getHours(start_date) < 8 || getHours(start_date) > 17)
+        return res.status(401).json({
+          error: 'You can only start deliveries between 08:00 and 18:00',
+        });
+
+      const deliveries = await Order.findAll({
+        where: {
+          deliverer_id: delivererId,
+          start_date: getDate(new Date()) && { [Op.ne]: null },
+        },
+      });
+
+      if (deliveries.length > 5)
+        return res
+          .status(401)
+          .json({ error: 'You can only start 5 deliveries per day' });
+
       await delivery.update({
         start_date,
       });
@@ -77,6 +101,16 @@ class DeliveryController {
         end_date,
         signature_id,
       });
+    }
+
+    if (signature_id && delivery.end_date !== null) {
+      await delivery.update({
+        signature_id,
+      });
+    } else if (signature_id) {
+      return res
+        .status(401)
+        .json({ error: 'You need to end the deliver before sending a photo' });
     }
 
     return res.json(delivery);

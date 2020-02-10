@@ -1,5 +1,4 @@
 import * as Yup from 'yup';
-import { startOfHour, parseISO, isBefore } from 'date-fns';
 
 import Order from '../models/Order';
 import Deliverer from '../models/Deliverer';
@@ -7,16 +6,18 @@ import Recipient from '../models/Recipient';
 import File from '../models/File';
 import Notification from '../schemas/Notification';
 
+import Queue from '../../lib/Queue';
+import newOrderMail from '../jobs/NewOrderMail';
+
 class OrderController {
   async index(req, res) {
     const { page = 1 } = req.query;
 
     const orders = await Order.findAll({
-      where: { canceled_at: null, end_date: null },
       order: ['createdAt'],
       limit: 20,
       offset: (page - 1) * 20,
-      attributes: ['id', 'product'],
+      attributes: ['id', 'product', 'start_date', 'end_date', 'canceled_at'],
       include: [
         {
           model: Recipient,
@@ -116,17 +117,14 @@ class OrderController {
       end_date,
     } = req.body;
 
-    const isDeliverer = await Deliverer.findByPk(deliverer_id);
-    if (!isDeliverer)
+    const deliverer = await Deliverer.findByPk(deliverer_id);
+    if (!deliverer)
       return res.status(400).json({ error: 'Deliverer id not found' });
 
-    const isRecipient = await Recipient.findByPk(recipient_id);
+    const recipient = await Recipient.findByPk(recipient_id);
 
-    if (!isRecipient)
+    if (!recipient)
       return res.status(400).json({ error: 'Recipient id not found' });
-
-    const hourStart = startOfHour(parseISO(start_date));
-    const hourEnd = startOfHour(parseISO(end_date));
 
     const order = await Order.create({
       recipient_id,
@@ -144,6 +142,8 @@ class OrderController {
       content: `Nova encomenda! O produto ${product} foi atribuído a você e está disponível para retirada!`,
       user: deliverer_id,
     });
+
+    await Queue.add(newOrderMail.key, { deliverer, recipient, order });
 
     return res.json(order);
   }
