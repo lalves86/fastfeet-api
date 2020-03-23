@@ -1,10 +1,22 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 
 import Recipient from '../models/Recipient';
 
 class RecipientController {
   async index(req, res) {
+    const { r } = req.query;
+
+    let recipient = `${r}%`;
+
+    if (!r) {
+      recipient = '%';
+    }
+
     const recipients = await Recipient.findAll({
+      where: {
+        name: { [Op.iLike]: recipient },
+      },
       attributes: [
         'id',
         'name',
