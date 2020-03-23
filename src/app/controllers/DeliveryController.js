@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import { getHours, parseISO, getDate } from 'date-fns';
+import { getHours, getDate } from 'date-fns';
 
 import Order from '../models/Order';
 import File from '../models/File';
