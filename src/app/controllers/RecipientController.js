@@ -75,7 +75,7 @@ class RecipientController {
         .length(2)
         .required(),
       city: Yup.string().required(),
-      zip: Yup.number()
+      zip: Yup.string()
         .length(8)
         .required(),
     });
