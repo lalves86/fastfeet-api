@@ -25,10 +25,15 @@ class OrderController {
         product: { [Op.iLike]: queryProduct },
       },
       order: ['createdAt'],
-      limit: 20,
-      offset: (page - 1) * 20,
+      limit: 10,
+      offset: (page - 1) * 10,
       attributes: ['id', 'product', 'start_date', 'end_date', 'canceled_at'],
       include: [
+        {
+          model: File,
+          as: 'signature',
+          attributes: ['name', 'path', 'url'],
+        },
         {
           model: Recipient,
           as: 'recipient',
@@ -66,8 +71,13 @@ class OrderController {
 
     const order = await Order.findOne({
       where: { id },
-      attributes: ['id', 'product'],
+      attributes: ['id', 'product', 'start_date', 'end_date', 'canceled_at'],
       include: [
+        {
+          model: File,
+          as: 'signature',
+          attributes: ['name', 'path', 'url'],
+        },
         {
           model: Recipient,
           as: 'recipient',
