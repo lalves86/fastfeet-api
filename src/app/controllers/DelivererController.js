@@ -31,19 +31,24 @@ class DelivererController {
     const { id } = req.params;
 
     const deliverer = await Deliverer.findByPk(id, {
-      attributes: ['name', 'email'],
+      attributes: ['name', 'email', 'avatar_id'],
+      include: [
+        { model: File, as: 'avatar', attributes: ['name', 'path', 'url'] },
+      ],
     });
 
     if (!deliverer) {
       return res.status(404).json({ error: 'Deliverer not found' });
     }
 
-    const { name, email } = deliverer;
+    const { name, email, avatar_id, avatar } = deliverer;
 
     return res.json({
       id,
       name,
       email,
+      avatar_id,
+      avatar,
     });
   }
 
