@@ -38,6 +38,8 @@ routes.post('/files', upload.single('file'), FileController.store);
 
 routes.post('/orders/:orderId/problems', ProblemController.store);
 
+routes.get('/deliverers/:id', DelivererController.show);
+
 // Middleware de autenticação
 routes.use(authMiddleware);
 
@@ -63,8 +65,6 @@ routes.put('/recipients/:id', RecipientController.update);
 routes.delete('/recipients/:id', RecipientController.delete);
 
 routes.get('/deliverers', DelivererController.index);
-
-routes.get('/deliverers/:id', DelivererController.show);
 
 routes.post('/deliverers', DelivererController.store);
 
