@@ -40,6 +40,8 @@ routes.post('/orders/:orderId/problems', ProblemController.store);
 
 routes.get('/deliverers/:id', DelivererController.show);
 
+routes.get('/problems/:orderId', ProblemController.show);
+
 // Middleware de autenticação
 routes.use(authMiddleware);
 
@@ -83,8 +85,6 @@ routes.put('/orders/:id', OrderController.update);
 routes.delete('/orders/:id', OrderController.delete);
 
 routes.get('/problems', ProblemController.index);
-
-routes.get('/problems/:orderId', ProblemController.show);
 
 routes.delete('/problems/:orderId', ProblemController.delete);
 

@@ -44,7 +44,7 @@ class ProblemController {
         {
           model: Order,
           as: 'delivery',
-          attributes: ['id', 'product'],
+          attributes: ['id', 'product', 'created_at'],
           include: [
             {
               model: Recipient,
