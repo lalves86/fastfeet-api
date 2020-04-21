@@ -39,7 +39,7 @@ class ProblemController {
 
     const problems = await DeliveryProblem.findAll({
       where: { delivery_id },
-      attributes: ['id', 'description'],
+      attributes: ['id', 'description', 'created_at'],
       include: [
         {
           model: Order,
