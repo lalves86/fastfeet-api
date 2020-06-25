@@ -27,9 +27,42 @@ Aplicação permite o cadastro e manutenção de endereços de destinatários pa
 * PUT /recipients/id - Altera o cadastro de um destinatário específico;
 * DELETE /recipients/id - Remove o cadastro de um destinatário específico.
 
+###### Rotas e métodos de Entregadores
+
+* GET /deliverers - Retorna todos os entregadores cadastrados;
+* GET /deliverers/id - Retorna o entregador com o id requisitado;
+* POST /deliverers - Cadastra um novo entregador;
+* PUT /deliverers/id - Altera o cadastro de um entregador específico;
+* DELETE /deliverers/id - Remove o cadastro de um entregador específico.
+
+###### Rotas e métodos de Entregas (para usuário)
+
+* GET /problems - Lista todos os problemas na entrega (administradores);
+* GET /problems/id - Permite ao entregador verificar os problemas em uma entrega específica;
+* POST /problems - Permite cadastrar um novo problema na entrega;
+* DELETE /orders/id - Altera o status do pedido para cancelado.
+
+###### Rotas e métodos de problemas na entrega
+
+* GET /delivery/id - Permite ao entregador listar as próprias entregas;
+* GET /deliveries/id - Permite ao entregador listar as próprias entregas;
+* PUT /deliveries/id - Permite ao entregador alterar o status da sua entrega;
+
+###### Rotas e métodos de Entregas
+
+* GET /orders - Retorna todos os pedidos cadastrados;
+* GET /orders/id - Retorna o pedido com o id requisitado;
+* POST /orders - Cadastra um novo pedido;
+* PUT /orders/id - Altera um pedido específico;
+* DELETE /orders/id - Apagar um pedido específico.
+
 ###### Rota de login
 
 * POST /session - Autentica o usuário a partir de login e senha, estabelecendo um token para a sessão.
+
+###### Uoload de arquivos
+
+* POST /files - Permite enviar um arquivo para o servidor, armazenando o endereço no banco de dados.
 
 ## Corpo das requisições
 
@@ -61,6 +94,14 @@ Aplicação permite o cadastro e manutenção de endereços de destinatários pa
 }
 ```
 
+* /deliverers
+```
+{
+	"name": "Road Runner",
+	"email": "rrunner@email.com"
+}
+```
+
 ## Validação de sessão
 
 A aplicação só permite que usuários logados acessem as rotas disponíveis, então um processo de login é implementado utilizando JWT.
@@ -72,7 +113,10 @@ Para usar o repositório, basta cloná-lo através do terminal ou prompt atravé
 ```
 > git clone https://github.com/lalves86/fastfeet-api.git
 > yarn
-> yarn dev
+> yarn dev (servidor principal)
+> yarn queue (serviço de fila)
 ```
+
+É necessário estabelecer uma conexão com um banco de dados postgres para que o servidor inicie corretamente.
 
 Acessar url local: http://localhost:3333
